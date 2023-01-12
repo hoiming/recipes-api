@@ -47,7 +47,14 @@ func main() {
 	router.GET("/recipes", ListRecipesHandler)
 	router.PUT("/recipes/:id", UpdateRecipeHandler)
 	router.DELETE("/recipes/{id}", DeleteRecipeHandler)
+	router.GET("/recipes/search", SearchRecipeHandler)
 	router.Run()
+}
+
+func SearchRecipeHandler(c *gin.Context) {
+	tag := c.Query("tag")
+	fmt.Println(tag)
+	c.JSON(http.StatusOK, tag)
 }
 
 func DeleteRecipeHandler(c *gin.Context) {
