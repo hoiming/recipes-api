@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/xid"
 	"net/http"
@@ -44,5 +45,29 @@ func main() {
 	router := gin.Default()
 	router.POST("/recipes", NewRecipeHandler)
 	router.GET("/recipes", ListRecipesHandler)
+	router.PUT("/recipes/:id", UpdateRecipeHandler)
+	router.DELETE("/recipes/{id}", DeleteRecipeHandler)
 	router.Run()
+}
+
+func DeleteRecipeHandler(c *gin.Context) {
+	id := c.Param("id")
+	fmt.Println(id)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Recipe has been deleted",
+	})
+}
+
+func UpdateRecipeHandler(c *gin.Context) {
+	id := c.Param("id")
+
+	var recipe Recipe
+	if err := c.ShouldBindJSON(&recipe); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	fmt.Println(id)
+	c.JSON(http.StatusOK, recipe)
 }
