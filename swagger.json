@@ -1,0 +1,50 @@
+{
+  "consumes": [
+    "applicaiton/json"
+  ],
+  "produces": [
+    "applicatoin/json"
+  ],
+  "schemes": [
+    "http"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a simple reicpes API. You can find out more about the API at https://github.com/PacktPublishing/Building-Distributed-Applications-in-Gin.",
+    "title": "Recipe API",
+    "version": "1.0.0"
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "paths": {
+    "/recipes": {
+      "get": {
+        "description": "Return list of recipes",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "recipes"
+        ],
+        "operationId": "listRecipes"
+      }
+    },
+    "/recipes/{id}": {
+      "put": {
+        "description": "ID of the recipe",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "recipes"
+        ],
+        "operationId": "updateRecipe",
+        "parameters": [
+          {
+            "name": "id"
+          }
+        ]
+      }
+    }
+  }
+}
