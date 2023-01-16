@@ -40,6 +40,7 @@ var client *mongo.Client
 var recipes []models.Recipe
 var collection *mongo.Collection
 var redisClient *redis.Client
+var authHandler *handlers.AuthHandler
 
 func init() {
 	recipes = make([]models.Recipe, 0)
@@ -76,14 +77,22 @@ func init() {
 	//pong, err := redisClient.Ping(ctx).Result()
 	//fmt.Println(pong, err)
 	//log.Println("Inserted recipes: ", len(insertManyResult.InsertedIDs))
+	collectionUsers := client.Database(os.Getenv("MONGO_DATABASE")).Collection("users")
+	authHandler = handlers.NewAuthHandler(ctx, collectionUsers)
 }
 
 func main() {
 	router := gin.Default()
-	router.POST("/recipes", recipeHandler.NewRecipeHandler)
 	router.GET("/recipes", recipeHandler.ListRecipesHandler)
-	router.PUT("/recipes/:id", recipeHandler.UpdateRecipeHandler)
-	router.DELETE("/recipes/{id}", recipeHandler.DeleteRecipeHandler)
+	authorized := router.Group("/")
+	authorized.Use(authHandler.AuthMiddleware())
+	{
+		authorized.POST("/recipes", recipeHandler.NewRecipeHandler)
+		authorized.PUT("/recipes/:id", recipeHandler.UpdateRecipeHandler)
+		authorized.DELETE("/recipes/{id}", recipeHandler.DeleteRecipeHandler)
+	}
 	router.GET("/recipes/search", recipeHandler.SearchRecipeHandler)
+	router.POST("/signin", authHandler.SignInHandler)
+	router.POST("/refresh", authHandler.RefreshHandler)
 	router.Run()
 }
